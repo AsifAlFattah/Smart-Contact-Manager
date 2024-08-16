@@ -14,7 +14,7 @@ import java.util.*;
 public class User {
     @Id
     private  String userId;
-    @Column(name = "user_name", nullable = false)
+    @Column(name = "userName", nullable = false)
     private  String userName;
     @Column(unique = true, nullable = false)
     private String userEmail;
@@ -28,6 +28,7 @@ public class User {
     private Boolean phoneVerified = false;
 
 //    Self, Google, Facebook, GitHub, LinkedIn
+    @Enumerated(value = EnumType.STRING)
     private Providers provider = Providers.SELF;
     private String providerUserId;
 

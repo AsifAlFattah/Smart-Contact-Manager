@@ -2,10 +2,15 @@ package com.codeprophet.scm2.controllers;
 
 import com.codeprophet.scm2.entities.User;
 import com.codeprophet.scm2.forms.UserForm;
+import com.codeprophet.scm2.helpers.Message;
+import com.codeprophet.scm2.helpers.MessageType;
 import com.codeprophet.scm2.services.UserService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,25 +69,39 @@ public class PageController {
 
     // Processing Register
     @RequestMapping(value = "/do-register", method = RequestMethod.POST)
-    public String processRegister(@ModelAttribute UserForm userForm){
+    public String processRegister(@Valid @ModelAttribute UserForm userForm, BindingResult rBindingResult, HttpSession session){
         System.out.println("Processing register page");
 
         // fetch form data
         // validate form data
+        if(rBindingResult.hasErrors()){
+            return "register";
+        }
         // save to database
         // User Service
-        User user = User.builder()
-                .userName(userForm.getUserName())
-                .userEmail(userForm.getUserEmail())
-                .password(userForm.getPassword())
-                .about(userForm.getAbout())
-                .phoneNumber(userForm.getPhoneNumber())
-                .profilePicture("https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg")
-                .build();
+//        User user = User.builder()
+//                .userName(userForm.getUserName())
+//                .userEmail(userForm.getUserEmail())
+//                .password(userForm.getPassword())
+//                .about(userForm.getAbout())
+//                .phoneNumber(userForm.getPhoneNumber())
+//                .profilePicture("https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg")
+//                .build();
+
+        User user = new User();
+        user.setUserName(userForm.getUserName());
+        user.setPassword(userForm.getPassword());
+        user.setUserEmail(userForm.getUserEmail());
+        user.setAbout(userForm.getAbout());
+        user.setPhoneNumber(userForm.getPhoneNumber());
+        user.setProfilePicture("https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg");
+
 
         User savedUser = userService.saveUser(user);
         System.out.println("User saved");
         // message = "Registration Successful"
+        Message message = Message.builder().message("Registration Successfull!").type(MessageType.green).build();
+        session.setAttribute("message", message);
 
         // Redirect to Login Page
         return "redirect:/register";
