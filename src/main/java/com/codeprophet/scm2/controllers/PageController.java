@@ -21,6 +21,11 @@ public class PageController {
     @Autowired
     private UserService userService;
 
+    @RequestMapping("/")
+    public String index(){
+        return "redirect:/home";
+    }
+
     @RequestMapping("/home")
     public String homePage(Model model){
 //        System.out.println("Homepage handler.");
